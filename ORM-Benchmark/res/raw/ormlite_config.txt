@@ -1,15 +1,15 @@
 #
-# generated on 2013/12/11 11:26:52
+# generated on 2014/05/27 01:31:03
 #
 # --table-start--
 dataClass=com.littleinc.orm_benchmark.ormlite.User
 tableName=user
 # --table-fields-start--
 # --field-start--
-# fieldName=mMessage
-# columnName=message_id
-# foreign=true
-# foreignAutoRefresh=true
+fieldName=mMessage
+columnName=message_id
+foreign=true
+foreignAutoRefresh=true
 # --field-end--
 # --field-start--
 fieldName=mId
@@ -77,13 +77,6 @@ fieldName=mChannelId
 columnName=channel_id
 dataPersister=LONG
 canBeNull=false
-# --field-end--
-# --field-start--
-# fieldName=mReaders
-# columnName=readers
-# foreignCollection=true
-# foreignCollectionEager=true
-# foreignCollectionColumnName=readers
 # --field-end--
 # --table-fields-end--
 # --table-end--

@@ -1,6 +1,5 @@
 package com.littleinc.orm_benchmark.greendao;
 
-import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -8,8 +7,6 @@ import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
-import de.greenrobot.dao.query.Query;
-import de.greenrobot.dao.query.QueryBuilder;
 
 import com.littleinc.orm_benchmark.greendao.User;
 
@@ -31,7 +28,6 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property Id = new Property(2, Long.class, "id", true, "_id");
     };
 
-    private Query<User> message_ReadersQuery;
 
     public UserDao(DaoConfig config) {
         super(config);
@@ -125,18 +121,4 @@ public class UserDao extends AbstractDao<User, Long> {
         return true;
     }
     
-    /** Internal query to resolve the "readers" to-many relationship of Message. */
-    public List<User> _queryMessage_Readers(Long id) {
-        synchronized (this) {
-            if (message_ReadersQuery == null) {
-                QueryBuilder<User> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.Id.eq(null));
-                message_ReadersQuery = queryBuilder.build();
-            }
-        }
-        Query<User> query = message_ReadersQuery.forCurrentThread();
-        query.setParameter(0, id);
-        return query.list();
-    }
-
 }

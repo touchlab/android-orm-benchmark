@@ -6,9 +6,11 @@ import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import com.littleinc.orm_benchmark.BenchmarkExecutable;
@@ -76,15 +78,18 @@ public enum SQLiteExecutor implements BenchmarkExecutable {
         try {
             db.beginTransaction();
 
+            ContentValues userCv = new ContentValues();
             for (User user : users) {
-                db.insert(User.TABLE_NAME, null, user.prepareForInsert());
+                user.prepareForInsert(userCv);
+                db.insert(User.TABLE_NAME, null, userCv);
             }
             Log.d(SQLiteExecutor.class.getSimpleName(), "Done, wrote "
                     + NUM_USER_INSERTS + " users");
 
-            for (Message message : messages) {
-                db.insert(Message.TABLE_NAME, null, message.prepareForInsert());
-            }
+            insertMessagesContentValues(messages, db);
+
+//            insertMessagesCompiled(messages, db);
+
             Log.d(SQLiteExecutor.class.getSimpleName(), "Done, wrote "
                     + NUM_MESSAGE_INSERTS + " messages");
             db.setTransactionSuccessful();
@@ -93,6 +98,69 @@ public enum SQLiteExecutor implements BenchmarkExecutable {
         }
         return System.nanoTime() - start;
     }
+
+    private void insertMessagesContentValues(List<Message> messages, SQLiteDatabase db)
+    {
+        ContentValues messageCv = new ContentValues();
+        for (Message message : messages) {
+            message.prepareForInsert(messageCv);
+            db.insert(Message.TABLE_NAME, null, messageCv);
+        }
+    }
+
+    private void insertMessagesCompiled(List<Message> messages, SQLiteDatabase db)
+    {
+        SQLiteStatement sqlStatement = createSqlStatement(db);
+        for (Message message : messages)
+        {
+            bindValues(sqlStatement, message);
+            sqlStatement.execute();
+        }
+    }
+
+    protected SQLiteStatement createSqlStatement(SQLiteDatabase db)
+    {
+        String sql = "INSERT INTO message(_id, client_id, sorted_by, created_at, content, sender_id, channel_id, command_id) values " +
+                "(?, ?, ?, ?, ?, ?, ?, ?)";
+
+        return db.compileStatement(sql);
+    }
+
+    protected void bindValues(SQLiteStatement stmt, Message entity) {
+            stmt.clearBindings();
+
+//            Long id = entity.getId();
+//            if (id != null) {
+//                stmt.bindLong(1, id);
+//            }
+
+            String content = entity.getContent();
+            if (content != null) {
+                stmt.bindString(2, content);
+            }
+
+            Long client_id = entity.getClientId();
+            if (client_id != null) {
+                stmt.bindLong(3, client_id);
+            }
+
+            Integer created_at = entity.getCreatedAt();
+            if (created_at != null) {
+                stmt.bindLong(4, created_at);
+            }
+
+            Double sorted_by = entity.getSortedBy();
+            if (sorted_by != null) {
+                stmt.bindDouble(5, sorted_by);
+            }
+
+            Long command_id = entity.getCommandId();
+            if (command_id != null) {
+                stmt.bindLong(6, command_id);
+            }
+            stmt.bindLong(7, entity.getSenderId());
+            stmt.bindLong(8, entity.getChannelId());
+        }
 
     @Override
     public long readWholeData() throws SQLException {

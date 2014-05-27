@@ -59,8 +59,7 @@ public class User {
         this.mFirstName = firstName;
     }
 
-    public ContentValues prepareForInsert() {
-        ContentValues contentValues = new ContentValues();
+    public ContentValues prepareForInsert(ContentValues contentValues) {
         contentValues.put(LAST_NAME_COLUMN, mLastName);
         contentValues.put(FIRST_NAME_COLUMN, mFirstName);
         return contentValues;

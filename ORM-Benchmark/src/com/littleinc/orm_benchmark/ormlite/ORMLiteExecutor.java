@@ -11,10 +11,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.dao.GenericRawResults;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.littleinc.orm_benchmark.BenchmarkExecutable;
+import com.littleinc.orm_benchmark.ormlite.generated.MessageQueryHelper;
 import com.littleinc.orm_benchmark.util.Util;
 
 public enum ORMLiteExecutor implements BenchmarkExecutable {
@@ -33,7 +36,7 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
     public long createDbStructure() throws SQLException {
         long start = System.nanoTime();
         ConnectionSource connectionSource = mHelper.getConnectionSource();
-//        TableUtils.createTable(connectionSource, User.class);
+        TableUtils.createTable(connectionSource, User.class);
         TableUtils.createTable(connectionSource, Message.class);
         return System.nanoTime() - start;
     }
@@ -52,15 +55,15 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
         List<Message> messages = new LinkedList<Message>();
         for (int i = 0; i < NUM_MESSAGE_INSERTS; i++) {
             Message newMessage = new Message();
-            newMessage.setCommandId(i);
-            newMessage.setSortedBy(System.nanoTime());
-            newMessage.setContent(Util.getRandomString(100));
-            newMessage.setClientId(System.currentTimeMillis());
+            newMessage.mCommandId = i;
+            newMessage.mSortedBy = System.nanoTime();
+            newMessage.mContent = Util.getRandomString(100);
+            newMessage.mClientId = System.currentTimeMillis();
             newMessage
-                    .setSenderId(Math.round(Math.random() * NUM_USER_INSERTS));
+                    .mSenderId = Math.round(Math.random() * NUM_USER_INSERTS);
             newMessage
-                    .setChannelId(Math.round(Math.random() * NUM_USER_INSERTS));
-            newMessage.setCreatedAt((int) (System.currentTimeMillis() / 1000L));
+                    .mChannelId = Math.round(Math.random() * NUM_USER_INSERTS);
+            newMessage.mCreatedAt = (int) (System.currentTimeMillis() / 1000L);
 
             messages.add(newMessage);
         }
@@ -102,10 +105,42 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
     @Override
     public long readWholeData() throws SQLException {
         long start = System.nanoTime();
-        Log.d(ORMLiteExecutor.class.getSimpleName(),
-                "Read, " + mHelper.getDao(Message.class).queryForAll().size()
-                        + " rows");
+        Dao<Message, ?> dao = mHelper.getDao(Message.class);
+
+//        testGenerated(dao);
+        testStandard(dao);
+
         return System.nanoTime() - start;
+    }
+
+    private void testStandard(Dao<Message, ?> dao) throws SQLException
+    {
+        Log.d(ORMLiteExecutor.class.getSimpleName(),
+                "Read, " + dao.queryForAll().size()
+                        + " rows");
+    }
+
+    private void testGenerated(Dao<Message, ?> dao) throws SQLException
+    {
+        MessageQueryHelper.Mapper mapper = new MessageQueryHelper.Mapper();
+        GenericRawResults<Message> rawResults = dao.queryRaw(
+                "select _id, client_id, command_id, sorted_by, created_at, content, sender_id, channel_id from message",
+                new DataType[]{
+                        DataType.LONG,
+                        DataType.LONG,
+                        DataType.LONG,
+                        DataType.DOUBLE,
+                        DataType.INTEGER,
+                        DataType.STRING,
+                        DataType.LONG,
+                        DataType.LONG
+                },
+                mapper
+        );
+
+        Log.d(ORMLiteExecutor.class.getSimpleName(),
+                "Read, " + rawResults.getResults().size()
+                        + " rows");
     }
 
     @Override
@@ -139,7 +174,7 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
         ConnectionSource connectionSource = mHelper.getConnectionSource();
         try
         {
-//            TableUtils.dropTable(connectionSource, User.class, true);
+            TableUtils.dropTable(connectionSource, User.class, true);
             TableUtils.dropTable(connectionSource, Message.class, true);
         }
         catch (SQLException e)

@@ -27,21 +27,13 @@ public class Message {
     public static final String CREATED_AT = "created_at";
 
     private long mId;
-
     private long mClientId;
-
     private long mCommandId;
-
     private double mSortedBy;
-
     private int mCreatedAt;
-
     private String mContent;
-
     private long mSenderId;
-
     private long mChannelId;
-
     private List<User> mReaders;
 
     public static final String[] PROJECTION = new String[] { CONTENT,
@@ -148,8 +140,7 @@ public class Message {
         return mReaders != null && !mReaders.isEmpty();
     }
 
-    public ContentValues prepareForInsert() {
-        ContentValues contentValues = new ContentValues();
+    public ContentValues prepareForInsert(ContentValues contentValues) {
         contentValues.put(CONTENT, mContent);
         contentValues.put(SORTED_BY, mSortedBy);
         contentValues.put(CLIENT_ID, mClientId);

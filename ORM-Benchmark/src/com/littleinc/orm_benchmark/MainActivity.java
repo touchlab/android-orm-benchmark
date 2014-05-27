@@ -47,6 +47,8 @@ public class MainActivity extends FragmentActivity {
             SQLiteExecutor.INSTANCE, ORMLiteExecutor.INSTANCE,
             GreenDaoExecutor.INSTANCE };
 
+//    private BenchmarkExecutable[] mOrms = new BenchmarkExecutable[] {SQLiteExecutor.INSTANCE, GreenDaoExecutor.INSTANCE};
+
     private SparseArray<Map<Task, List<Long>>> mGlobalResults;
 
     @Override

@@ -9,10 +9,10 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     // DB CONFIG
     private static int DB_VERSION = 1;
 
-    private static String DB_NAME = "sqlite_db";
+    private static String DB_NAME_PREFIX = "sqlite_db";
 
-    public DataBaseHelper(Context context, boolean isInMemory) {
-        super(context, (isInMemory ? null : DB_NAME), null, DB_VERSION);
+    public DataBaseHelper(Context context, boolean isInMemory, String suffix) {
+        super(context, (isInMemory ? null : (DB_NAME_PREFIX + suffix)), null, DB_VERSION);
     }
 
     @Override

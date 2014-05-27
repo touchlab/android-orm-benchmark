@@ -1,22 +1,21 @@
 package com.littleinc.orm_benchmark.sqlite;
 
-import static com.littleinc.orm_benchmark.util.Util.getRandomString;
-
-import java.sql.SQLException;
-import java.util.LinkedList;
-import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
-
 import com.littleinc.orm_benchmark.BenchmarkExecutable;
 import com.littleinc.orm_benchmark.util.Util;
 
-public enum SQLiteExecutor implements BenchmarkExecutable {
+import java.sql.SQLException;
+import java.util.LinkedList;
+import java.util.List;
+
+import static com.littleinc.orm_benchmark.util.Util.getRandomString;
+
+public enum SQLiteExecutorFast implements BenchmarkExecutable {
 
     INSTANCE;
 
@@ -29,12 +28,12 @@ public enum SQLiteExecutor implements BenchmarkExecutable {
 
     @Override
     public String getOrmName() {
-        return "RAW";
+        return "RAWFAST";
     }
 
     @Override
     public void init(Context context, boolean useInMemoryDb) {
-        mHelper = new DataBaseHelper(context, useInMemoryDb, "slow");
+        mHelper = new DataBaseHelper(context, useInMemoryDb, "fast");
     }
 
     @Override
@@ -83,14 +82,14 @@ public enum SQLiteExecutor implements BenchmarkExecutable {
                 user.prepareForInsert(userCv);
                 db.insert(User.TABLE_NAME, null, userCv);
             }
-            Log.d(SQLiteExecutor.class.getSimpleName(), "Done, wrote "
+            Log.d(SQLiteExecutorFast.class.getSimpleName(), "Done, wrote "
                     + NUM_USER_INSERTS + " users");
 
-            insertMessagesContentValues(messages, db);
+//            insertMessagesContentValues(messages, db);
 
-//            insertMessagesCompiled(messages, db);
+            insertMessagesCompiled(messages, db);
 
-            Log.d(SQLiteExecutor.class.getSimpleName(), "Done, wrote "
+            Log.d(SQLiteExecutorFast.class.getSimpleName(), "Done, wrote "
                     + NUM_MESSAGE_INSERTS + " messages");
             db.setTransactionSuccessful();
         } finally {
@@ -191,7 +190,7 @@ public enum SQLiteExecutor implements BenchmarkExecutable {
 
                 messages.add(newMessage);
             }
-            Log.d(SQLiteExecutor.class.getSimpleName(),
+            Log.d(SQLiteExecutorFast.class.getSimpleName(),
                     "Read, " + messages.size() + " rows");
         } finally {
             if (c != null) {
@@ -230,7 +229,7 @@ public enum SQLiteExecutor implements BenchmarkExecutable {
                 newMessage.setSortedBy(c.getDouble(c
                         .getColumnIndex(Message.SORTED_BY)));
 
-                Log.d(SQLiteExecutor.class.getSimpleName(),
+                Log.d(SQLiteExecutorFast.class.getSimpleName(),
                         "Read, " + c.getCount() + " rows");
             }
         } finally {
@@ -273,7 +272,7 @@ public enum SQLiteExecutor implements BenchmarkExecutable {
 
                 messages.add(newMessage);
             }
-            Log.d(SQLiteExecutor.class.getSimpleName(),
+            Log.d(SQLiteExecutorFast.class.getSimpleName(),
                     "Read, " + messages.size() + " rows");
         } finally {
             if (c != null) {

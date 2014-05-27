@@ -6,10 +6,10 @@ dataClass=com.littleinc.orm_benchmark.ormlite.User
 tableName=user
 # --table-fields-start--
 # --field-start--
-fieldName=mMessage
-columnName=message_id
-foreign=true
-foreignAutoRefresh=true
+# fieldName=mMessage
+# columnName=message_id
+# foreign=true
+# foreignAutoRefresh=true
 # --field-end--
 # --field-start--
 fieldName=mId
@@ -79,11 +79,11 @@ dataPersister=LONG
 canBeNull=false
 # --field-end--
 # --field-start--
-fieldName=mReaders
-columnName=readers
-foreignCollection=true
-foreignCollectionEager=true
-foreignCollectionColumnName=readers
+# fieldName=mReaders
+# columnName=readers
+# foreignCollection=true
+# foreignCollectionEager=true
+# foreignCollectionColumnName=readers
 # --field-end--
 # --table-fields-end--
 # --table-end--

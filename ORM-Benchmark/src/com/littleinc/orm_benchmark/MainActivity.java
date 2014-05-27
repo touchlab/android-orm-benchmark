@@ -150,8 +150,7 @@ public class MainActivity extends FragmentActivity {
                         }
                         addProfilerResult(profilerId, task, result);
                     } catch (SQLException e) {
-                        e.printStackTrace();
-                        continue;
+                        throw new RuntimeException(e);
                     }
                 }
             }

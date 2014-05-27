@@ -10,6 +10,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.SelectArg;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
@@ -32,7 +33,7 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
     public long createDbStructure() throws SQLException {
         long start = System.nanoTime();
         ConnectionSource connectionSource = mHelper.getConnectionSource();
-        TableUtils.createTable(connectionSource, User.class);
+//        TableUtils.createTable(connectionSource, User.class);
         TableUtils.createTable(connectionSource, Message.class);
         return System.nanoTime() - start;
     }
@@ -69,14 +70,24 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
         db.beginTransaction();
 
         try {
-            for (User user : users) {
-                User.getDao().createOrUpdate(user);
-            }
-            Log.d(ORMLiteExecutor.class.getSimpleName(), "Done, wrote "
-                    + NUM_USER_INSERTS + " users");
+            try
+            {
+                Dao<User,Long> userDao = User.getDao();
+                for (User user : users) {
 
+                    userDao.create(user);
+                }
+                Log.d(ORMLiteExecutor.class.getSimpleName(), "Done, wrote "
+                        + NUM_USER_INSERTS + " users");
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+
+            Dao<Message, Long> messageDao = Message.getDao();
             for (Message message : messages) {
-                Message.getDao().createOrUpdate(message);
+                messageDao.create(message);
             }
             Log.d(ORMLiteExecutor.class.getSimpleName(), "Done, wrote "
                     + NUM_MESSAGE_INSERTS + " messages");
@@ -126,8 +137,15 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
     public long dropDb() throws SQLException {
         long start = System.nanoTime();
         ConnectionSource connectionSource = mHelper.getConnectionSource();
-        TableUtils.dropTable(connectionSource, User.class, true);
-        TableUtils.dropTable(connectionSource, Message.class, true);
+        try
+        {
+//            TableUtils.dropTable(connectionSource, User.class, true);
+            TableUtils.dropTable(connectionSource, Message.class, true);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
         return System.nanoTime() - start;
     }
 

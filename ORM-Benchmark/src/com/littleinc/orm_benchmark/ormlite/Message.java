@@ -4,7 +4,7 @@ import java.sql.SQLException;
 
 import android.provider.BaseColumns;
 
-import com.j256.ormlite.android.apptools.DatabaseQuery;
+//import com.j256.ormlite.android.apptools.DatabaseQuery;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DataType;
@@ -12,7 +12,6 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-@DatabaseQuery
 @DatabaseTable(tableName = Message.TABLE_NAME)
 public class Message {
 

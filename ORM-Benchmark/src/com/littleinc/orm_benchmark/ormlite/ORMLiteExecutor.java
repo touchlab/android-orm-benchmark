@@ -69,26 +69,21 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
         }
 
         long start = System.nanoTime();
+
+        Dao<User, Long> userDao = User.getDao();
+        Dao<Message, Long> messageDao = Message.getDao();
+
         SQLiteDatabase db = mHelper.getReadableDatabase();
         db.beginTransaction();
 
         try {
-            try
-            {
-                Dao<User,Long> userDao = User.getDao();
-                for (User user : users) {
-
-                    userDao.create(user);
-                }
-                Log.d(ORMLiteExecutor.class.getSimpleName(), "Done, wrote "
-                        + NUM_USER_INSERTS + " users");
-            }
-            catch (Exception e)
-            {
-                throw new RuntimeException(e);
+            for (User user : users) {
+                userDao.create(user);
             }
 
-            Dao<Message, Long> messageDao = Message.getDao();
+            Log.d(ORMLiteExecutor.class.getSimpleName(), "Done, wrote "
+                    + NUM_USER_INSERTS + " users");
+
             for (Message message : messages) {
                 messageDao.create(message);
             }
@@ -106,40 +101,16 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
     public long readWholeData() throws SQLException {
         long start = System.nanoTime();
         Dao<Message, ?> dao = mHelper.getDao(Message.class);
-
-//        testGenerated(dao);
+        long daoTime = System.nanoTime();
         testStandard(dao);
-
-        return System.nanoTime() - start;
+        long end = System.nanoTime();
+        Log.w("orm", "dao: "+ (daoTime - start) +"/read: "+ (end - daoTime));
+        return end - start;
     }
 
-    private void testStandard(Dao<Message, ?> dao) throws SQLException
-    {
+    private void testStandard(Dao<Message, ?> dao) throws SQLException {
         Log.d(ORMLiteExecutor.class.getSimpleName(),
                 "Read, " + dao.queryForAll().size()
-                        + " rows");
-    }
-
-    private void testGenerated(Dao<Message, ?> dao) throws SQLException
-    {
-        MessageQueryHelper.Mapper mapper = new MessageQueryHelper.Mapper();
-        GenericRawResults<Message> rawResults = dao.queryRaw(
-                "select _id, client_id, command_id, sorted_by, created_at, content, sender_id, channel_id from message",
-                new DataType[]{
-                        DataType.LONG,
-                        DataType.LONG,
-                        DataType.LONG,
-                        DataType.DOUBLE,
-                        DataType.INTEGER,
-                        DataType.STRING,
-                        DataType.LONG,
-                        DataType.LONG
-                },
-                mapper
-        );
-
-        Log.d(ORMLiteExecutor.class.getSimpleName(),
-                "Read, " + rawResults.getResults().size()
                         + " rows");
     }
 
@@ -149,9 +120,9 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
         Log.d(ORMLiteExecutor.class.getSimpleName(),
                 "Read, "
                         + mHelper
-                                .getDao(Message.class)
-                                .queryForEq(Message.COMMAND_ID,
-                                        LOOK_BY_INDEXED_FIELD).size() + " rows");
+                        .getDao(Message.class)
+                        .queryForEq(Message.COMMAND_ID,
+                                LOOK_BY_INDEXED_FIELD).size() + " rows");
         return System.nanoTime() - start;
     }
 
@@ -162,8 +133,8 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
         Log.d(ORMLiteExecutor.class.getSimpleName(),
                 "Read, "
                         + mHelper.getDao(Message.class).queryBuilder()
-                                .limit(SEARCH_LIMIT).where()
-                                .like(Message.CONTENT, arg).query().size()
+                        .limit(SEARCH_LIMIT).where()
+                        .like(Message.CONTENT, arg).query().size()
                         + " rows");
         return System.nanoTime() - start;
     }
@@ -172,13 +143,10 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
     public long dropDb() throws SQLException {
         long start = System.nanoTime();
         ConnectionSource connectionSource = mHelper.getConnectionSource();
-        try
-        {
+        try {
             TableUtils.dropTable(connectionSource, User.class, true);
             TableUtils.dropTable(connectionSource, Message.class, true);
-        }
-        catch (SQLException e)
-        {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return System.nanoTime() - start;

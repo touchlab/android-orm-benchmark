@@ -12,10 +12,10 @@ public interface BenchmarkExecutable {
 
     public static final int NUM_READERS = 10;
 
-    public static final int NUM_USER_INSERTS = 1000;
+    public static final int NUM_USER_INSERTS = 50;
 //    public static final int NUM_USER_INSERTS = 0;
 
-    public static final int NUM_MESSAGE_INSERTS = 10000;
+    public static final int NUM_MESSAGE_INSERTS = 500;
 
     public static final int NUM_MESSAGES_WITH_READERS = 50;
 

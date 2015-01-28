@@ -46,9 +46,10 @@ public class MainActivity extends FragmentActivity {
 
     private BenchmarkExecutable[] mOrms = new BenchmarkExecutable[] {
             SQLiteExecutor.INSTANCE,
-            SQLiteExecutorFast.INSTANCE,
+//            SQLiteExecutorFast.INSTANCE,
             ORMLiteExecutor.INSTANCE,
-            GreenDaoExecutor.INSTANCE };
+            GreenDaoExecutor.INSTANCE
+    };
 
 //    private BenchmarkExecutable[] mOrms = new BenchmarkExecutable[] {SQLiteExecutor.INSTANCE, GreenDaoExecutor.INSTANCE};
 

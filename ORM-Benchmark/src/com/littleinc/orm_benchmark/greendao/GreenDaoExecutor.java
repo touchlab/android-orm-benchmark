@@ -73,37 +73,49 @@ public enum GreenDaoExecutor implements BenchmarkExecutable {
 
         long start = System.nanoTime();
         final DaoSession daoSession = mDaoMaster.newSession();
+        final UserDao userDao = daoSession.getUserDao();
+
         daoSession.runInTx(new Runnable() {
 
             @Override
             public void run() {
-                UserDao userDao = daoSession.getUserDao();
+
                 for (User user : users) {
                     userDao.insertOrReplace(user);
                 }
-                Log.d(GreenDaoExecutor.class.getSimpleName(), "Done, wrote "
-                        + NUM_USER_INSERTS + " users");
+//                Log.d(GreenDaoExecutor.class.getSimpleName(), "Done, wrote "
+//                        + NUM_USER_INSERTS + " users");
 
                 MessageDao messageDao = daoSession.getMessageDao();
                 for (Message message : messages) {
                     messageDao.insertOrReplace(message);
                 }
-                Log.d(GreenDaoExecutor.class.getSimpleName(), "Done, wrote "
-                        + NUM_MESSAGE_INSERTS + " messages");
+//                Log.d(GreenDaoExecutor.class.getSimpleName(), "Done, wrote "
+//                        + NUM_MESSAGE_INSERTS + " messages");
                 daoSession.clear();
+
             }
         });
+
         return System.nanoTime() - start;
     }
 
     @Override
     public long readWholeData() throws SQLException {
         long start = System.nanoTime();
+
         DaoSession daoSession = mDaoMaster.newSession();
         MessageDao messageDao = daoSession.getMessageDao();
+
+        long daoTime = System.nanoTime();
+
         Log.d(GreenDaoExecutor.class.getSimpleName(), "Read, "
                 + messageDao.queryBuilder().list().size() + " rows");
         daoSession.clear();
+
+        long end = System.nanoTime();
+
+        Log.w("green", "dao: "+ (daoTime - start) +"/read: "+ (end - daoTime));
         return System.nanoTime() - start;
     }
 
@@ -115,10 +127,10 @@ public enum GreenDaoExecutor implements BenchmarkExecutable {
         Log.d(GreenDaoExecutor.class.getSimpleName(),
                 "Read, "
                         + messageDao
-                                .queryBuilder()
-                                .where(Properties.Command_id
-                                        .eq(LOOK_BY_INDEXED_FIELD)).list()
-                                .size() + " rows");
+                        .queryBuilder()
+                        .where(Properties.Command_id
+                                .eq(LOOK_BY_INDEXED_FIELD)).list()
+                        .size() + " rows");
         daoSession.clear();
         return System.nanoTime() - start;
     }
@@ -131,10 +143,10 @@ public enum GreenDaoExecutor implements BenchmarkExecutable {
         Log.d(GreenDaoExecutor.class.getSimpleName(),
                 "Read, "
                         + messageDao
-                                .queryBuilder()
-                                .limit((int) SEARCH_LIMIT)
-                                .where(Properties.Content.like("%"
-                                        + SEARCH_TERM + "%")).list().size()
+                        .queryBuilder()
+                        .limit((int) SEARCH_LIMIT)
+                        .where(Properties.Content.like("%"
+                                + SEARCH_TERM + "%")).list().size()
                         + " rows");
         daoSession.clear();
         return System.nanoTime() - start;

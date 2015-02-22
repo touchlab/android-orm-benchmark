@@ -109,8 +109,13 @@ public enum GreenDaoExecutor implements BenchmarkExecutable {
 
         long daoTime = System.nanoTime();
 
+        List<Message> list = messageDao.queryBuilder().list();
+        /*for (Message message : list)
+        {
+            message.getReaders();
+        }*/
         Log.d(GreenDaoExecutor.class.getSimpleName(), "Read, "
-                + messageDao.queryBuilder().list().size() + " rows");
+                + list.size() + " rows");
         daoSession.clear();
 
         long end = System.nanoTime();

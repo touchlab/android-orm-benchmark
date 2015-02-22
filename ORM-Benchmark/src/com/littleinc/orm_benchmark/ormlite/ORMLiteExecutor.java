@@ -55,8 +55,8 @@ public enum ORMLiteExecutor implements BenchmarkExecutable {
         List<Message> messages = new LinkedList<Message>();
         for (int i = 0; i < NUM_MESSAGE_INSERTS; i++) {
             Message newMessage = new Message();
-            newMessage.mCommandId = i;
-            newMessage.mSortedBy = System.nanoTime();
+            newMessage.mCommandId = (long)i;
+            newMessage.mSortedBy = (double)System.nanoTime();
             newMessage.mContent = Util.getRandomString(100);
             newMessage.mClientId = System.currentTimeMillis();
             newMessage

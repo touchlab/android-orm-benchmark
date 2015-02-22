@@ -55,7 +55,7 @@ public class Generator {
         message.addLongProperty(CHANNEL_ID).notNull();
 
         // One-to-many relationship
-//        message.addToMany(user, userPk, READERS);
+        message.addToMany(user, userPk, READERS);
 
         try {
             new DaoGenerator().generateAll(schema, "../ORM-Benchmark/src/");

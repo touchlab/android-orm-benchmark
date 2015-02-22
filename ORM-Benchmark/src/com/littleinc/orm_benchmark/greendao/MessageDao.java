@@ -33,6 +33,8 @@ public class MessageDao extends AbstractDao<Message, Long> {
         public final static Property Channel_id = new Property(7, long.class, "channel_id", false, "CHANNEL_ID");
     };
 
+    private DaoSession daoSession;
+
 
     public MessageDao(DaoConfig config) {
         super(config);
@@ -40,6 +42,7 @@ public class MessageDao extends AbstractDao<Message, Long> {
     
     public MessageDao(DaoConfig config, DaoSession daoSession) {
         super(config, daoSession);
+        this.daoSession = daoSession;
     }
 
     /** Creates the underlying database table. */
@@ -101,6 +104,12 @@ public class MessageDao extends AbstractDao<Message, Long> {
         }
         stmt.bindLong(7, entity.getSender_id());
         stmt.bindLong(8, entity.getChannel_id());
+    }
+
+    @Override
+    protected void attachEntity(Message entity) {
+        super.attachEntity(entity);
+        entity.__setDaoSession(daoSession);
     }
 
     /** @inheritdoc */

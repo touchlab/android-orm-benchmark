@@ -31,6 +31,7 @@ import com.littleinc.orm_benchmark.greendao.GreenDaoExecutor;
 import com.littleinc.orm_benchmark.ormlite.ORMLiteExecutor;
 import com.littleinc.orm_benchmark.sqlite.SQLiteExecutor;
 import com.littleinc.orm_benchmark.sqliteoptimized.OptimizedSQLiteExecutor;
+import com.littleinc.orm_benchmark.squidb.SquiDbExecutor;
 import com.littleinc.orm_benchmark.util.Util;
 
 public class MainActivity extends FragmentActivity {
@@ -49,7 +50,8 @@ public class MainActivity extends FragmentActivity {
             new SQLiteExecutor(),
             new OptimizedSQLiteExecutor(),
             new ORMLiteExecutor(),
-            new GreenDaoExecutor() };
+            new GreenDaoExecutor(),
+            new SquiDbExecutor() };
 
     private boolean mWasInitialized = false;
 

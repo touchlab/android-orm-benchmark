@@ -1,7 +1,1 @@
-include ':ORM-Benchmark', ':GreenDAO-Generator'
-include ':squidb'
-project(':squidb').projectDir = new File(settingsDir, '../squidb/squidb')
-include ':squidb-annotations'
-project(':squidb-annotations').projectDir = new File(settingsDir, '../squidb/squidb-annotations')
-include ':squidb-processor'
-project(':squidb-processor').projectDir = new File(settingsDir, '../squidb/squidb-processor')
+include ':ORM-Benchmark', ':GreenDAO-Generator', ':squidb', ':squidb-annotations', ':squidb-processor'
